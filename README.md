@@ -31,8 +31,8 @@ cmake --build build -j8 --target run
 Linux users will need to install some pre-requisites for this template to compile.
 
 ```shell
-sudo apt-get update
-sudo apt-get install cmake libx11-dev libxfixes-dev libegl-dev libgbm-dev libfontconfig-dev
+sudo apt update
+sudo apt install cmake libx11-dev libxfixes-dev libegl-dev libgbm-dev libfontconfig-dev
 ```
 
 # Android
@@ -44,6 +44,45 @@ This template also supports building and running APKs for Android! Setup for thi
 ## Android Setup
 
 To build for Android, you need a few SDKs! [Android Studio](https://developer.android.com/studio) has a good interface for grabbing these, and doubles as a nice tool for inspecting APKs.
+
+
+### If building on Linux (CLI): Quick setup
+If you prefer the command line on Linux, this is a minimal setup that matches the versions this template targets.
+
+```bash
+# 1) Base tools
+sudo apt update
+sudo apt install cmake libx11-dev libxfixes-dev libegl-dev libgbm-dev libfontconfig-dev unzip curl zip ninja-build openjdk-8-jdk adb google-android-cmdline-tools-13.0-installer
+
+# 2) to rule out potential errors, we explicitly tell sdkmanager where to install the Android SDK & NDK
+
+export ANDROID_HOME="$HOME/Android/Sdk"
+
+sdkmanager --sdk_root=$ANDROID_HOME \
+  "platform-tools" \
+  "platforms;android-32" \
+  "build-tools;32.0.0" \
+  "ndk;25.2.9519653"
+
+# 4) More environment variable setup...:
+
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+
+# 5) Point CMake to the NDK and set JAVA_HOME (OpenJDK 8 on Ubuntu)
+export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/25.2.9519653"
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+
+# (Optional) Persist these to your shell profile (after install)
+echo 'export ANDROID_HOME="$HOME/Android/Sdk"'   >> "$HOME/.bashrc"
+echo 'export ANDROID_SDK_ROOT="$HOME/Android/Sdk"' >> "$HOME/.bashrc"
+echo 'export ANDROID_NDK_HOME="$HOME/Android/Sdk/ndk/25.2.9519653"' >> "$HOME/.bashrc"
+echo 'export PATH="$ANDROID_HOME/platform-tools:$PATH"' >> "$HOME/.bashrc"
+echo 'export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"' >> "$HOME/.bashrc"
+```
+
+# Now you can continue to Android Build section.
+
 
 ### Android SDKs
 From [Android Studio](https://developer.android.com/studio), go to Tools->SDK Manager.
@@ -102,6 +141,7 @@ mkdir build-android
 
 # Configure the build, I'll often make a .bat file for this configure command
 # just to make it easier to do!
+
 cmake -B build-android ^
   -G Ninja ^
   -DCMAKE_ANDROID_NDK=%ANDROID_NDK_HOME% ^
@@ -110,6 +150,11 @@ cmake -B build-android ^
   -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
 # Same, but as a single line. Nicer if not using a .bat
 cmake -B build-android -G Ninja -DCMAKE_ANDROID_NDK=%ANDROID_NDK_HOME% -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=32 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
+
+#Or for Linux:
+cmake -B build-android -G Ninja -DCMAKE_ANDROID_NDK=$ANDROID_NDK_HOME -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=32 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
+
+
 # Build an APK, install, and run it
 cmake --build build-android -j8 --target run
 # Or just build an APK
