@@ -1,3 +1,12 @@
+// A StereoKit app! The API reference and guides live at https://stereokit.net.
+// Those docs are written against StereoKit's C# API, so expect to do a little
+// translation while reading them. The names map over fairly mechanically, for
+// example Model.FromFile is model_create_file.
+//
+// For C++ specifically, StereoKitCTest is a much larger reference project with
+// demos for most of StereoKit's features:
+// https://github.com/StereoKit/StereoKit/tree/master/Examples/StereoKitCTest
+
 #include <stereokit.h>
 #include <stereokit_ui.h>
 

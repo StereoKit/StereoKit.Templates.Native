@@ -152,6 +152,10 @@ else()
 			COMMAND_EXPAND_LISTS)
 	endif()
 
+	# macOS gets Vulkan via MoltenVK, which also needs to sit next to the
+	# executable. This one is a no-op on other platforms.
+	skr_copy_moltenvk(${PROJECT_NAME})
+
 	add_custom_target(run
 		COMMAND           $<TARGET_FILE:${PROJECT_NAME}>
 		WORKING_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>

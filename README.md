@@ -1,6 +1,6 @@
 # StereoKit Template for CMake
 
-This is a basic StereoKit template for C/C++ using [CMake](https://cmake.org/). It's straightforward and portable way to build native StereoKit apps on Linux, Windows, and Android! This template works quite well with VS Code, and following the prompts provided there can get you running pretty quickly. CMake can also be used to generate a Visual Studio solution, for those that prefer that workflow.
+This is a basic StereoKit template for C/C++ using [CMake](https://cmake.org/). It's straightforward and portable way to build native StereoKit apps on Windows, Linux, macOS, and Android! This template works quite well with VS Code, and following the prompts provided there can get you running pretty quickly. CMake can also be used to generate a Visual Studio solution, for those that prefer that workflow.
 
 This template directly references and builds the StereoKit repository rather than using pre-built binaries, so this template could also be great for those that wish to fork and modify StereoKit's code!
 
@@ -28,6 +28,12 @@ cmake --build build -j8 --target run
 
 The first configure downloads and builds StereoKit and its dependencies, so it takes a while! Later builds are much faster.
 
+## Next steps
+
+The API reference and guides are at [stereokit.net](https://stereokit.net). Those docs are written against StereoKit's C# API, so expect to do a little translation while reading them from C++. The concepts are the same and the names map over fairly mechanically, for example `Model.FromFile` is `model_create_file`, and `material.Transparency = Transparency.Blend` is `material_set_transparency(material, transparency_blend)`.
+
+For a C++ example, [StereoKitCTest](https://github.com/StereoKit/StereoKit/tree/master/Examples/StereoKitCTest) is StereoKit's own reference project, with demos covering most of its features. It's also fetched to `build/_deps/stereokitc-src/Examples/StereoKitCTest/` when you configure, so you can read through it locally.
+
 # Linux
 
 Linux users will need to install some pre-requisites for this template to compile.
@@ -38,6 +44,17 @@ sudo apt-get install cmake ninja-build libx11-dev libxrandr-dev libxcursor-dev l
 ```
 
 Rendering goes through Vulkan, so you'll also need a Vulkan driver for your GPU at runtime. On a desktop install that's usually already there, but `mesa-vulkan-drivers` will cover most hardware if it isn't.
+
+# macOS
+
+macOS needs Xcode's command line tools for the compiler, and CMake to drive the build. Ninja is optional, but it does make builds faster.
+
+```shell
+xcode-select --install
+brew install cmake ninja
+```
+
+Rendering goes through Vulkan here too, via [MoltenVK](https://github.com/KhronosGroup/MoltenVK), which translates Vulkan calls to Metal. CMake downloads MoltenVK for you on the first configure and copies it next to the executable, so there's nothing extra to install.
 
 # Android
 
@@ -65,6 +82,14 @@ From the Android SDK location you noted, you'll need to supply these variables a
 
 # Or just launch the GUI
 rundll32 sysdm.cpl,EditEnvironmentVariables
+```
+
+On Linux, add them to your `~/.bashrc` (or `~/.zshrc`) instead.
+```shell
+# Your path may vary
+
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_NDK_HOME=$HOME/Android/Sdk/ndk/25.2.9519653
 ```
 
 ### Java SDK (JDK)
@@ -98,11 +123,10 @@ Ninja's [site is here](https://ninja-build.org/), but you can install it quite e
 
 > Shaders are compiled by a tool that only runs on your desktop, and Android builds re-use the copy in `/bin`. **Do a desktop build first!**
 
+Configure the build. On Windows, I'll often make a .bat file for this command just to make it easier to do!
 ```shell
 # From the project root directory
 
-# Configure the build, I'll often make a .bat file for this configure command
-# just to make it easier to do!
 cmake -B build-android ^
   -G Ninja ^
   -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK_HOME%/build/cmake/android.toolchain.cmake ^
@@ -110,6 +134,21 @@ cmake -B build-android ^
   -DANDROID_PLATFORM=android-32
 # Same, but as a single line. Nicer if not using a .bat
 cmake -B build-android -G Ninja -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK_HOME%/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-32
+```
+
+The same thing from bash, on Linux.
+```shell
+# From the project root directory
+
+cmake -B build-android \
+  -G Ninja \
+  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+  -DANDROID_ABI=arm64-v8a \
+  -DANDROID_PLATFORM=android-32
+```
+
+Building is the same everywhere.
+```shell
 # Build an APK, install it, and run it
 cmake --build build-android -j8 --target run
 # Or just build the APK
