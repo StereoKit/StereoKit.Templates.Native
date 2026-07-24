@@ -4,4 +4,8 @@
 .gradle/
 build*/
 
+# The shader compiler gets built and installed here on demand.
+bin/
+
+# Debug signing key, generated on the first Android build.
 debug.keystore

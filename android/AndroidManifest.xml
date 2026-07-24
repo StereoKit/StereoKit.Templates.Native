@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+<!-- The Android manifest for this app!
+
+     This declares the intent categories, permissions, and feature flags that
+     headsets look for, so the app is treated as an immersive XR app. The
+     @VARIABLES@ are filled in by CMake from the add_skapp() arguments, so most
+     apps never need to touch them.
+
+     The permissions here cover the optional features StereoKit can use, like
+     hand, eye, and face tracking. They're all safe to leave in, but if you
+     know you don't need one, trimming it keeps store review simpler.
+
+     Icon and theme resources come from StereoKit. To override those too, pass
+     RESOURCES to add_skapp() alongside MANIFEST.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="@ANDROID_PACKAGE_NAME@"
 	android:versionCode="@APK_VERSION_CODE@"
 	android:versionName="@APK_VERSION_NAME@">
 
-	<uses-sdk 
+	<uses-sdk
 		android:minSdkVersion   ="@ANDROID_MIN_SDK_VERSION@"
 		android:targetSdkVersion="@ANDROID_TARGET_SDK_VERSION@" />
-	
+
 	<application
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
-		android:supportsRtl="true">
-
-		<activity 
-			android:name="android.app.NativeActivity" 
-			android:label="@string/app_name" 
-			android:configChanges="orientation|keyboardHidden|screenSize" 
-			android:exported="true">
-
-			<meta-data android:name="android.app.lib_name" android:value="@PROJECT_NAME@" />
-			<intent-filter>
-				<action   android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-				<category android:name="org.khronos.openxr.intent.category.IMMERSIVE_HMD" />
-				<category android:name="com.oculus.intent.category.VR" />
-			</intent-filter>
-		</activity>
+		android:theme="@style/NativeActivityTheme"
+		android:supportsRtl="true"
+		android:hasCode="true"
+		android:debuggable="@ANDROID_DEBUGGABLE@">
 
 		<!-- Oculus -->
 		<meta-data android:name="com.oculus.supportedDevices" android:value="quest|quest2|quest3|questpro"/>
@@ -39,6 +41,25 @@
 		<meta-data android:name="handtracking" android:value="1" />
 		<!-- Snapdragon -->
 		<meta-data android:name="spaces.version" android:value="0.15.0"/>
+		<!-- AndroidXR -->
+		<property android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE" android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_UNMANAGED" />
+		<uses-native-library android:name="libopenxr.google.so" android:required="false" />
+
+		<activity
+			android:name="net.stereokit.sk_app.SkAppActivity"
+			android:label="@string/app_name"
+			android:theme="@android:style/Theme.DeviceDefault"
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:exported="true">
+
+			<meta-data android:name="android.app.lib_name" android:value="@APK_LIB_NAME@" />
+			<intent-filter>
+				<action   android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="org.khronos.openxr.intent.category.IMMERSIVE_HMD" />
+				<category android:name="com.oculus.intent.category.VR" />
+			</intent-filter>
+		</activity>
 
 		<profileable android:shell="true"/>
 	</application>
@@ -53,10 +74,20 @@
 	<uses-permission android:name="org.khronos.openxr.permission.OPENXR_SYSTEM"/>
 	<uses-permission android:name="org.khronos.openxr.permission.OPENXR" />
 	<queries>
-		<provider android:name="NA" android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
+		<provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
 		<intent> <action android:name="org.khronos.openxr.OpenXRRuntimeService" /> </intent>
 		<intent> <action android:name="org.khronos.openxr.OpenXRApiLayerService" /> </intent>
 	</queries>
+
+	<!-- AndroidXR items -->
+	<!-- https://developer.android.com/develop/xr/get-started#designing-xr -->
+	<uses-feature    android:name="android.software.xr.immersive"           android:required="true"  />
+	<uses-feature    android:name="android.hardware.xr.input.hand_tracking" android:required="false" />
+	<uses-feature    android:name="android.hardware.xr.input.controller"    android:required="false" />
+	<uses-feature    android:name="android.hardware.xr.input.eye_tracking"  android:required="false" />
+	<uses-permission android:name="android.permission.SCENE_UNDERSTANDING" />
+	<uses-permission android:name="android.permission.HAND_TRACKING" />
+	<uses-permission android:name="android.permission.EYE_TRACKING_FINE" />
 
 	<!-- Vive specific items  -->
 	<uses-feature android:name="wave.feature.handtracking" android:required="false"/>
@@ -75,7 +106,11 @@
 	<uses-permission android:name="com.oculus.permission.BODY_TRACKING"/>
 	<uses-permission android:name="com.oculus.permission.FACE_TRACKING"/>
 	<uses-permission android:name="com.oculus.permission.EYE_TRACKING"/>
+	<uses-permission android:name="com.oculus.permission.USE_SCENE"/>
+	<uses-permission android:name="com.oculus.permission.RENDER_MODEL"/>
+	<uses-feature    android:name="com.oculus.feature.CONTEXTUAL_BOUNDARYLESS_APP" android:required="false" />
 	<uses-feature    android:name="com.oculus.feature.PASSTHROUGH"    android:required="false"/>
+	<uses-feature    android:name="com.oculus.feature.RENDER_MODEL"   android:required="false"/>
 	<uses-feature    android:name="oculus.software.handtracking"      android:required="false"/>
 	<uses-feature    android:name="com.oculus.software.body_tracking" android:required="false"/>
 	<uses-feature    android:name="oculus.software.face_tracking"     android:required="false"/>

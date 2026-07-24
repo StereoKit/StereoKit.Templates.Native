@@ -1,6 +1,7 @@
 #include <stereokit.h>
 #include <stereokit_ui.h>
 
+// Generated at build time from src/shaders/floor.hlsl, see CMakeLists.txt.
 #include "floor.hlsl.h"
 
 using namespace sk;
@@ -12,16 +13,12 @@ mesh_t     floor_mesh;
 model_t    model;
 pose_t     model_pose = {{0,0,-0.5f}, quat_identity};
 
-// app_settings is required by the Android binding code for inserting Activity
-// values required for initialization.
-sk_settings_t app_settings = {"SKNativeTemplate"};
-
-// This main function signature is required for the Android binding code to
-// invoke it. See /android/android_main.cpp for the binding code.
+// This is the entry point on every platform, Android included!
 int main(int argc, char** argv) {
 
 	// Initialize StereoKit.
-	if (!sk_init(app_settings))
+	sk_settings_t settings = {"SKNativeTemplate"};
+	if (!sk_init(settings))
 		return 1;
 
 	// Initialize assets.
@@ -31,15 +28,16 @@ int main(int argc, char** argv) {
 	material_set_transparency(floor_mat, transparency_blend);
 	shader_release(floor_shader);
 
+	// Files in the Assets folder are bundled with the app on every platform.
 	model = model_create_file("Watermelon.glb");
 
 	// Main app loop.
 	sk_run([](){ // Step
-		if (device_display_get_blend() == display_blend_opaque) { 
+		if (device_display_get_blend() == display_blend_opaque) {
 			mesh_draw(floor_mesh, floor_mat, matrix_ts({0,-1.5f,0}, {30,0.1f,30}));
 		}
 
-		ui_handle_begin("Cube", model_pose, model_get_bounds(model), false);
+		ui_handle_begin("Cube", model_pose, nullptr, model_get_bounds(model), false);
 		render_add_model(model, matrix_identity);
 		ui_handle_end();
 	}, [](){ // Shutdown
