@@ -4,6 +4,8 @@ This is a basic StereoKit template for C/C++ using [CMake](https://cmake.org/). 
 
 This template directly references and builds the StereoKit repository rather than using pre-built binaries, so this template could also be great for those that wish to fork and modify StereoKit's code!
 
+> This branch builds against StereoKit's latest stable release. To follow StereoKit's in-development `develop` branch instead, use this template's [`sk_preview`](https://github.com/StereoKit/StereoKit.Templates.Native/tree/sk_preview) branch.
+
 ## Project Structure
 
 - `/src` - Your application code.

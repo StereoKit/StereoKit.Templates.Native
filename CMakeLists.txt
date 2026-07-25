@@ -97,7 +97,7 @@ endif()
 FetchContent_Declare(
 	StereoKitC
 	GIT_REPOSITORY https://github.com/StereoKit/StereoKit.git
-	GIT_TAG        v0.3.10 # Version tag, could also be a branch name like "develop", or a git hash.
+	GIT_TAG        v0.3.11 # Version tag, could also be a branch name like "develop", or a git hash.
 	GIT_SHALLOW    1)
 FetchContent_MakeAvailable(StereoKitC)
 target_compile_options(StereoKitC PRIVATE
