@@ -88,7 +88,7 @@ target_compile_options(StereoKitC PRIVATE
 # on desktop, and a shared library plus an APK on Android. The Android-only
 # arguments are ignored on desktop.
 add_skapp(${PROJECT_NAME}
-	PACKAGE_NAME com.example.sknativetemplate # Android app id, make this yours!
+	PACKAGE_NAME com.example.${PROJECT_NAME}  # Android app id, replace com.example!
 	APP_NAME     "SK Native Template"         # Name shown on the device
 	MIN_SDK      32                           # Needs a matching SDK Platform installed
 	TARGET_SDK   33
