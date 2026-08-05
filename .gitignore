@@ -1,3 +1,6 @@
+# Ignore all shell scripts in the root directory
+/*.sh 
+
 .vs/
 .vscode/
 .idea/
